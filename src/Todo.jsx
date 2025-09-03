@@ -1,12 +1,14 @@
 import { use, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 function Todo() {
-    let [todos, setTodos] = useState([{ task: "food", id: uuidv4() }]);
+    let [todos, setTodos] = useState([{ task: "food", id: uuidv4(), isDone: false, }]);
     let [newTodo, setNewTodo] = useState("");
     let addTask = () => {
-        setTodos((prevTodos) => {
-            return [...prevTodos, { task: newTodo, id: uuidv4() }]
+        if (newTodo != "") {
+            setTodos((prevTodos) => {
+            return [...prevTodos, { task: newTodo, id: uuidv4(), isDone: false }]
         });
+        }
         setNewTodo("");
     }
     let updateTodo = (event) => {
@@ -15,23 +17,23 @@ function Todo() {
     let DeleteTodo = (id) => {
         setTodos((prevTodos) => todos.filter((prevTodos) => prevTodos.id != id));
     }
-    let upperCase = () => {
+    let markAsDoneAll = () => {
         setTodos((prevTodos) => (
             prevTodos.map((ele) => {
                 return {
                     ...ele,
-                    task: ele.task.toUpperCase(),
+                    isDone:true,
                 };
             })
         ))
     };
-    let upperCaseOne = (id) => {
+    let markAsDone = (id) => {
         setTodos((prevTodos) =>
             prevTodos.map((ele) => {
                 if (ele.id === id) {
                     return {
                         ...ele,
-                        task: ele.task.toUpperCase(),
+                        isDone: true,
                     };
                 } else {
                     return ele;
@@ -50,22 +52,18 @@ function Todo() {
             <hr />
             <h4>Your All Task</h4>
             <ul>{todos.map((el) => {
-                return <li key={el.id} ><span>{el.task}</span>
-                    &nbsp; &nbsp; &nbsp;
-
-                    if (task === done) {
-                        <i class="fa-solid fa-circle-check"></i>
-                    }else{
-                        <i class="fa-regular fa-circle-check"></i>
-                    }
+                return <li key={el.id} >
+                    <span
+                        style={el.isDone ? { textDecorationLine: "line-through" } : {}}>
+                        {el.task}</span>
+                    &nbsp; &nbsp;
                     <button onClick={() => DeleteTodo(el.id)} >Delete</button>
                     &nbsp; &nbsp;
-                    <button onClick={() => upperCaseOne(el.id)} >Update</button>
-
+                    <button onClick={() => markAsDone(el.id)} >Mark As Done</button>
                 </li>
             })}
             </ul>
-            <button onClick={upperCase}>Update</button>
+            <button onClick={markAsDoneAll}>mark As Done All</button>
         </>
     )
 }
